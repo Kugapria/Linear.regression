@@ -6,42 +6,36 @@ dat = pd.read_csv('https://raw.githubusercontent.com/AdiPersonalWorks/Random/mas
 print("Sucessfully imported the data")
 print(dat.head(15))
 
-
-
-#dataset for regression
-x = dat.iloc[:, :-1].values
-y = dat.iloc[:, 1].values
-
-#Setting the test and train  limits
 from sklearn.model_selection import train_test_split
 x_train,x_test,y_train,y_test = train_test_split(x,y,test_size=0.4,random_state=12)
 
 from sklearn.linear_model import LinearRegression
 reg = LinearRegression()
 reg.fit(x_train,y_train)
+print('Linear Regression Object is created')
 
-#prediction
 y_pred = reg.predict(x_test)
 print(y_pred)
 print(y_test)
+check= pd.DataFrame({'Actual':y_test , 'Predicted':y_pred})
+check
 
-#plotting
 l = reg.coef_*x + reg.intercept_
 
 plt.scatter(x,y)
-plt.plot(x,l)
+plt.plot(x,l,'green')
 plt.xlabel('Time')
 plt.ylabel('Scores')
 plt.title('Scores vs Time spent')
 plt.show()
 
-#Prediction for specific value
 hours = 9.25
-own_pred = reg.predict([[hours]])
-print("No of Hours = {}".format(hours))
-print("Predicted Score = {}".format(own_pred[0]))
+pred = reg.predict([[hours]])
+print(f"No of Hours = {hours}")
+print(f"Predicted Score = {pred[0]}")
 
-#Error calculation
-from sklearn import metrics
-error = metrics.mean_absolute_error(y_test,y_pred)
-print(f'Error is {error}')
+from sklearn.metrics import r2_score,mean_absolute_error,mean_squared_error
+
+print(f"Accuracy of our prediction is {100*(r2_score(y_test,y_pred))} percent")
+print(f"Absolute Error is {mean_absolute_error(y_test,y_pred)}")
+print(f"Mean squared error in our prediction is {mean_squared_error(y_test,y_pred)}")
